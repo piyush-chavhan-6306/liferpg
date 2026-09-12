@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply font-body;
+  }
+  body {
+    @apply bg-ink-950 text-parchment-100;
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(232, 130, 63, 0.08), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(143, 174, 107, 0.06), transparent 45%);
+    background-attachment: fixed;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+  /* Visible, deliberate focus ring for keyboard navigation everywhere */
+  :focus-visible {
+    outline: 2px solid #f0a15c;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .panel {
+    @apply bg-ink-900/80 border border-ink-700 rounded-lg backdrop-blur-sm;
+  }
+  .btn-primary {
+    @apply bg-ember-500 hover:bg-ember-400 text-ink-950 font-semibold px-4 py-2 rounded-md
+           transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply bg-ink-800 hover:bg-ink-700 text-parchment-100 border border-ink-700 font-medium px-4 py-2 rounded-md
+           transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .input-field {
+    @apply bg-ink-950 border border-ink-700 rounded-md px-3 py-2 text-parchment-100
+           placeholder:text-parchment-300/40 focus:border-ember-500 transition-colors;
+  }
+}
