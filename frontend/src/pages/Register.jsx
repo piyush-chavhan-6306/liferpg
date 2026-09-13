@@ -37,6 +37,12 @@ export default function Register() {
 
       if (supaError) throw supaError
 
+      // Supabase returns an empty identities array if user is already registered!
+      if (data?.user && (!data.user.identities || data.user.identities.length === 0)) {
+        setError('This email is already registered in Supabase. Please sign in with your password, or use Google / GitHub.')
+        return
+      }
+
       // If Supabase session is immediate (e.g. email autoconfirmed)
       if (data?.session && data?.user) {
         const syncRes = await authApi.supabaseSync({
@@ -101,9 +107,16 @@ export default function Register() {
             {email}
           </div>
 
-          <p className="text-xs text-parchment-400/80 mb-6 leading-relaxed">
+          <p className="text-xs text-parchment-400/80 mb-4 leading-relaxed">
             Please click the link in your email to verify your address and awaken your adventurer profile.
           </p>
+
+          <div className="bg-amber-950/40 border border-amber-600/30 rounded-lg p-3 mb-6 text-left">
+            <p className="text-xs text-amber-300 font-medium mb-1">🔍 Can't find the email?</p>
+            <p className="text-xs text-parchment-300/80 leading-relaxed">
+              Supabase verification emails often land in your <strong>Spam</strong>, <strong>Junk</strong>, or <strong>Promotions</strong> folder. Search your mailbox for <em>"Supabase"</em> or check Spam.
+            </p>
+          </div>
 
           <div className="space-y-3">
             <button

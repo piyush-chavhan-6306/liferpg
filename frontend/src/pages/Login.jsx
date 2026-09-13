@@ -3,9 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../context/AuthContext.jsx'
 import OAuthButtons from '../components/OAuthButtons.jsx'
+import { supabase } from '../lib/supabase.js'
+import { authApi } from '../api/client.js'
 
 export default function Login() {
-  const { login } = useAuth()
+  const { login, setSession } = useAuth()
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -16,11 +18,39 @@ export default function Login() {
     e.preventDefault()
     setError('')
     setBusy(true)
+
+    const input = username.trim()
+
     try {
-      await login(username, password)
+      // 1. If input looks like an email, attempt Supabase email/password authentication
+      if (input.includes('@')) {
+        const { data, error: supaErr } = await supabase.auth.signInWithPassword({
+          email: input,
+          password,
+        })
+
+        if (!supaErr && data?.user) {
+          const syncRes = await authApi.supabaseSync({
+            email: data.user.email,
+            username: data.user.user_metadata?.username || data.user.email.split('@')[0],
+            provider: 'supabase',
+            supabase_uid: data.user.id,
+          })
+          setSession(syncRes.data.access_token, syncRes.data.user)
+          navigate('/app')
+          return
+        }
+      }
+
+      // 2. Standard backend username login
+      await login(input, password)
       navigate('/app')
     } catch (err) {
-      setError(err.response?.data?.detail || 'Something went wrong. Try again.')
+      const msg =
+        err.response?.data?.detail ||
+        err.message ||
+        'Incorrect username, email, or password.'
+      setError(typeof msg === 'string' ? msg : 'Incorrect credentials.')
     } finally {
       setBusy(false)
     }
@@ -40,7 +70,7 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div>
             <label htmlFor="username" className="block text-sm mb-1 text-parchment-200">
-              Username
+              Username or Email
             </label>
             <input
               id="username"
