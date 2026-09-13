@@ -7,7 +7,7 @@ import { authApi } from '../api/client.js'
 import OAuthButtons from '../components/OAuthButtons.jsx'
 
 export default function Register() {
-  const { setSession } = useAuth()
+  const { register: localRegister, setSession } = useAuth()
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
@@ -22,45 +22,58 @@ export default function Register() {
     setError('')
     setBusy(true)
 
+    const cleanUsername = username.trim()
+    const cleanEmail = email.trim().toLowerCase()
+
     try {
-      const redirectTo = `${window.location.origin}/auth/callback`
-
-      // 1. Sign up user via Supabase with email confirmation
-      const { data, error: supaError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { username },
-          emailRedirectTo: redirectTo,
-        },
-      })
-
-      if (supaError) throw supaError
-
-      // Supabase returns an empty identities array if user is already registered!
-      if (data?.user && (!data.user.identities || data.user.identities.length === 0)) {
-        setError('This email is already registered in Supabase. Please sign in with your password, or use Google / GitHub.')
-        return
-      }
-
-      // If Supabase session is immediate (e.g. email autoconfirmed)
-      if (data?.session && data?.user) {
-        const syncRes = await authApi.supabaseSync({
-          email: data.user.email,
-          username: username || data.user.email.split('@')[0],
-          provider: 'supabase',
-          supabase_uid: data.user.id,
+      // 1. Try Supabase sign up
+      try {
+        const redirectTo = `${window.location.origin}/auth/callback`
+        const { data, error: supaError } = await supabase.auth.signUp({
+          email: cleanEmail,
+          password,
+          options: {
+            data: { username: cleanUsername },
+            emailRedirectTo: redirectTo,
+          },
         })
-        setSession(syncRes.data.access_token, syncRes.data.user)
-        navigate('/app')
-        return
+
+        // If Supabase session is immediate (e.g. autoconfirmed)
+        if (!supaError && data?.session && data?.user) {
+          const syncRes = await authApi.supabaseSync({
+            email: data.user.email,
+            username: cleanUsername || data.user.email.split('@')[0],
+            provider: 'supabase',
+            supabase_uid: data.user.id,
+          })
+          setSession(syncRes.data.access_token, syncRes.data.user)
+          navigate('/app')
+          return
+        }
+
+        if (data?.user && (!data.user.identities || data.user.identities.length === 0)) {
+          setError('This email is already registered. Please sign in with your password, or use Google / GitHub.')
+          return
+        }
+
+        if (supaError) {
+          console.warn('Supabase auth notice, falling back to direct database registration:', supaError.message)
+        }
+      } catch (supaErr) {
+        console.warn('Supabase auth error, falling back to direct database registration:', supaErr)
       }
 
-      // If email confirmation is required, show verification prompt
-      setVerificationSent(true)
+      // 2. Seamless fallback: direct backend database registration
+      // This bypasses any Supabase email rate limits or SMTP delivery blocks
+      await localRegister(cleanUsername, cleanEmail, password)
+      navigate('/app')
     } catch (err) {
       console.error('Registration error:', err)
-      setError(err.message || 'Could not create your character. Please check your details.')
+      const msg =
+        err.response?.data?.detail ||
+        err.message ||
+        'Could not create your character. Please check your details.'
+      setError(typeof msg === 'string' ? msg : 'Could not create your character.')
     } finally {
       setBusy(false)
     }
