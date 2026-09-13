@@ -53,7 +53,9 @@ class User(Base):
     id = Column(String, primary_key=True, default=gen_uuid)
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
+    hashed_password = Column(String, nullable=True)
+    auth_provider = Column(String, default="local", nullable=False)
+    avatar_url = Column(String, nullable=True)
     created_at = Column(DateTime, default=dt.datetime.utcnow)
 
     character = relationship("Character", back_populates="user", uselist=False, cascade="all, delete-orphan")

@@ -34,6 +34,7 @@ export const authApi = {
   register: (data) => client.post('/auth/register', data),
   login: (data) => client.post('/auth/login', data),
   me: () => client.get('/auth/me'),
+  supabaseSync: (data) => client.post('/auth/supabase-sync', data),
 }
 
 export const characterApi = {

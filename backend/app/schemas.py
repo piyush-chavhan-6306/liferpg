@@ -30,9 +30,19 @@ class UserOut(BaseModel):
     id: str
     username: str
     email: EmailStr
+    auth_provider: Optional[str] = "local"
+    avatar_url: Optional[str] = None
 
     class Config:
         from_attributes = True
+
+
+class SupabaseSyncPayload(BaseModel):
+    email: EmailStr
+    username: Optional[str] = None
+    provider: Optional[str] = "supabase"
+    avatar_url: Optional[str] = None
+    supabase_uid: Optional[str] = None
 
 
 class Token(BaseModel):

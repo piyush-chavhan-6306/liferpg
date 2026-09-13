@@ -44,6 +44,12 @@ export function AuthProvider({ children }) {
     setUser(res.data.user)
   }, [])
 
+  const setSession = useCallback((token, userData) => {
+    localStorage.setItem('questlog_token', token)
+    localStorage.setItem('questlog_user', JSON.stringify(userData))
+    setUser(userData)
+  }, [])
+
   const logout = useCallback(() => {
     localStorage.removeItem('questlog_token')
     localStorage.removeItem('questlog_user')
@@ -51,7 +57,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, setSession }}>
       {children}
     </AuthContext.Provider>
   )

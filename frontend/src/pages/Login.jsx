@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../context/AuthContext.jsx'
+import OAuthButtons from '../components/OAuthButtons.jsx'
 
 export default function Login() {
   const { login } = useAuth()
@@ -76,6 +77,17 @@ export default function Login() {
             {busy ? 'Entering…' : 'Enter the journal'}
           </button>
         </form>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-parchment-500/20" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-ink-900 px-3 text-parchment-400/60 font-medium">Or connect with</span>
+          </div>
+        </div>
+
+        <OAuthButtons onError={setError} />
 
         <p className="text-sm text-parchment-300/60 mt-6 text-center">
           New here?{' '}

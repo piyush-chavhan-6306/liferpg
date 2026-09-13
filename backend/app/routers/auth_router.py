@@ -45,3 +45,57 @@ def login(payload: schemas.UserLogin, db: Session = Depends(get_db)):
 @router.get("/me", response_model=schemas.UserOut)
 def read_me(current_user: models.User = Depends(auth.get_current_user)):
     return current_user
+
+
+import re
+import uuid
+
+
+@router.post("/supabase-sync", response_model=schemas.Token)
+def supabase_sync(payload: schemas.SupabaseSyncPayload, db: Session = Depends(get_db)):
+    # Check if user already exists by email
+    user = db.query(models.User).filter(models.User.email == payload.email).first()
+
+    if not user:
+        # Generate a clean unique username if not provided
+        candidate_username = payload.username
+        if not candidate_username:
+            candidate_username = payload.email.split("@")[0]
+
+        candidate_username = re.sub(r"[^a-zA-Z0-9_]", "", candidate_username)[:20]
+        if len(candidate_username) < 3:
+            candidate_username = f"knight_{uuid.uuid4().hex[:6]}"
+
+        existing_u = db.query(models.User).filter(models.User.username == candidate_username).first()
+        if existing_u:
+            candidate_username = f"{candidate_username[:16]}_{uuid.uuid4().hex[:4]}"
+
+        user = models.User(
+            id=payload.supabase_uid or str(uuid.uuid4()),
+            username=candidate_username,
+            email=payload.email,
+            hashed_password=None,
+            auth_provider=payload.provider or "supabase",
+            avatar_url=payload.avatar_url,
+        )
+        db.add(user)
+        db.flush()
+
+        character = models.Character(user_id=user.id)
+        db.add(character)
+        db.commit()
+        db.refresh(user)
+    else:
+        if payload.avatar_url and not user.avatar_url:
+            user.avatar_url = payload.avatar_url
+        if payload.provider and user.auth_provider == "local":
+            user.auth_provider = payload.provider
+
+        if not user.character:
+            character = models.Character(user_id=user.id)
+            db.add(character)
+        db.commit()
+        db.refresh(user)
+
+    token = auth.create_access_token({"sub": user.id})
+    return schemas.Token(access_token=token, user=schemas.UserOut.model_validate(user))
