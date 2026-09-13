@@ -58,17 +58,29 @@
         padding: 24px;
         box-sizing: border-box;
       }
-      .realm-spinner {
-        width: 42px;
-        height: 42px;
-        border: 3px solid rgba(240, 161, 92, 0.15);
-        border-top-color: #f0a15c;
-        border-radius: 50%;
-        animation: realm-spin 0.75s linear infinite;
-        margin-bottom: 20px;
+      .summon-rune {
+        animation: rune-spin 26s linear infinite;
       }
-      @keyframes realm-spin {
+      .summon-inner {
+        animation: rune-spin-rev 18s linear infinite;
+      }
+      .summon-core {
+        animation: core-pulse 3s ease-in-out infinite;
+      }
+      @keyframes rune-spin {
         to { transform: rotate(360deg); }
+      }
+      @keyframes rune-spin-rev {
+        to { transform: rotate(-360deg); }
+      }
+      @keyframes core-pulse {
+        0%, 100% { transform: scale(0.95); box-shadow: 0 0 15px rgba(240, 161, 92, 0.25); }
+        50% { transform: scale(1.05); box-shadow: 0 0 28px rgba(240, 161, 92, 0.55); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .summon-rune, .summon-inner, .summon-core {
+          animation: none !important;
+        }
       }
     </style>
 
@@ -76,15 +88,34 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/assets/index-CA0fSKoj.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DoWUYqKE.css">
+    <script type="module" crossorigin src="/assets/index-CB4Bzt2-.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CjVo6X6u.css">
   </head>
   <body class="bg-ink-950" style="background-color: #141019;">
     <div id="root">
       <div id="initial-loader" class="realm-preloader">
-        <div class="realm-spinner"></div>
-        <div style="font-size: 22px; font-weight: 700; color: #f0a15c; letter-spacing: 0.05em; margin-bottom: 6px;">Questlog</div>
-        <div style="font-size: 13px; color: #a89f91;">Entering the Realm…</div>
+        <div style="position: relative; width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+          <svg class="summon-rune" style="position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(240, 161, 92, 0.4);" viewBox="0 0 200 200" fill="none" stroke="currentColor">
+            <circle cx="100" cy="100" r="94" stroke-width="1" stroke-dasharray="3 4" opacity="0.6" />
+            <circle cx="100" cy="100" r="88" stroke-width="1.2" opacity="0.8" />
+            <circle cx="100" cy="8" r="2.5" fill="currentColor" />
+            <circle cx="100" cy="192" r="2.5" fill="currentColor" />
+            <circle cx="8" cy="100" r="2.5" fill="currentColor" />
+            <circle cx="192" cy="100" r="2.5" fill="currentColor" />
+            <polygon points="100,16 160,100 100,184 40,100" stroke-width="0.75" stroke="currentColor" opacity="0.3" />
+            <polygon points="100,16 184,100 100,184 16,100" stroke-width="0.5" stroke="currentColor" opacity="0.2" transform="rotate(45 100 100)" />
+          </svg>
+          <svg class="summon-inner" style="position: absolute; width: 130px; height: 130px; color: rgba(240, 161, 92, 0.5);" viewBox="0 0 160 160" fill="none" stroke="currentColor">
+            <circle cx="80" cy="80" r="72" stroke-width="1" stroke-dasharray="6 3 2 3" opacity="0.7" />
+            <circle cx="80" cy="80" r="62" stroke-width="0.8" opacity="0.5" />
+            <circle cx="80" cy="80" r="48" stroke-width="0.6" stroke-dasharray="1 4" opacity="0.6" />
+          </svg>
+          <div class="summon-core" style="position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; border-radius: 50%; background: rgba(28, 22, 34, 0.9); border: 1px solid rgba(240, 161, 92, 0.4); font-size: 26px;">
+            ⚔️
+          </div>
+        </div>
+        <div style="font-family: 'Cinzel', serif, system-ui; font-size: 13px; font-weight: 600; color: #f3ecd8; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 6px;">RESTORING YOUR CHARACTER</div>
+        <div style="font-size: 11px; color: rgba(220, 204, 163, 0.6); letter-spacing: 0.05em; font-style: italic;">Preparing your realm...</div>
         <div id="loader-error-box" style="display:none; margin-top: 20px; max-width: 440px; background: rgba(220, 38, 38, 0.15); border: 1px solid rgba(220, 38, 38, 0.4); border-radius: 8px; padding: 16px; color: #fca5a5; font-size: 13px; line-height: 1.5;"></div>
       </div>
     </div>

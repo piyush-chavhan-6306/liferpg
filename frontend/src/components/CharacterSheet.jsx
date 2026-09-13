@@ -10,7 +10,7 @@ const TITLE_LABELS = {
   'title-archon': 'Archon',
 }
 
-export default function CharacterSheet({ character, username, inventory = [] }) {
+export default function CharacterSheet({ character, username, inventory = [], isLevelingUp = false }) {
   if (!character) return null
   const maxAttr = Math.max(1, ...ATTRIBUTES.map((a) => character[a.key] || 0))
 
@@ -19,7 +19,42 @@ export default function CharacterSheet({ character, username, inventory = [] }) 
     inventory.find((i) => i.category === 'title' && TITLE_LABELS[i.id])
 
   return (
-    <section className="panel p-5" aria-labelledby="character-heading">
+    <section
+      className={`panel p-5 relative transition-all duration-700 ${
+        isLevelingUp
+          ? 'ring-2 ring-amber-400/90 shadow-[0_0_35px_rgba(245,158,11,0.5)] scale-[1.02]'
+          : ''
+      }`}
+      aria-labelledby="character-heading"
+    >
+      {isLevelingUp && (
+        <motion.div
+          className="pointer-events-none absolute inset-0 rounded-lg overflow-hidden z-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-amber-500/15 via-transparent to-amber-400/10 animate-pulse" />
+          {[12, 28, 48, 68, 84].map((left, idx) => (
+            <motion.span
+              key={idx}
+              className="absolute bottom-2 w-1.5 h-1.5 rounded-full bg-amber-300 shadow-[0_0_6px_#fbbf24]"
+              style={{ left: `${left}%` }}
+              animate={{
+                y: [-5, -80],
+                opacity: [0, 1, 0],
+                scale: [0.6, 1.2, 0.4],
+              }}
+              transition={{
+                duration: 1.5 + idx * 0.2,
+                repeat: Infinity,
+                delay: idx * 0.15,
+                ease: 'easeOut',
+              }}
+            />
+          ))}
+        </motion.div>
+      )}
       <div className="flex items-start justify-between mb-4">
         <div>
           <h2 id="character-heading" className="text-xl text-parchment-100 flex items-center gap-2 flex-wrap">

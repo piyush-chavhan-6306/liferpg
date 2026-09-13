@@ -145,7 +145,7 @@ export default function Dashboard() {
         <div>
           {loading
             ? <CharacterSkeleton />
-            : <CharacterSheet character={character} username={user?.username} inventory={inventory} />
+            : <CharacterSheet character={character} username={user?.username} inventory={inventory} isLevelingUp={!!levelUpResult} />
           }
         </div>
 

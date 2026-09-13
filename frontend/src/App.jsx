@@ -7,14 +7,12 @@ import Dashboard from './pages/Dashboard.jsx'
 import LandingPage from './pages/LandingPage.jsx'
 import AuthCallback from './pages/AuthCallback.jsx'
 
+import LoadingScreen from './components/LoadingScreen.jsx'
+
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-parchment-300">
-        Loading your journal…
-      </div>
-    )
+    return <LoadingScreen message="RESTORING YOUR CHARACTER" subtitle="Preparing your realm..." />
   }
   if (!user) return <Navigate to="/login" replace />
   return children
