@@ -15,17 +15,10 @@ export default function OAuthButtons({ onError }) {
         provider,
         options: {
           redirectTo,
-          skipBrowserRedirect: true,
         },
       })
 
       if (error) throw error
-
-      if (data?.url) {
-        window.location.href = data.url
-      } else {
-        throw new Error(`Could not start ${provider} sign in. Please check provider credentials.`)
-      }
     } catch (err) {
       console.error(`${provider} OAuth error:`, err)
       let msg = err.message || `Failed to sign in with ${provider}.`
