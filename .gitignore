@@ -18,3 +18,5 @@ frontend/.env
 .idea/
 .vercel
 node_modules/
+
+.vercel
