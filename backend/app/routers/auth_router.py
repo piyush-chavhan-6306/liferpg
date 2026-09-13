@@ -47,6 +47,12 @@ def read_me(current_user: models.User = Depends(auth.get_current_user)):
     return current_user
 
 
+@router.get("/check-email")
+def check_email(email: str, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.email == email).first()
+    return {"exists": bool(user), "username": user.username if user else None}
+
+
 import re
 import uuid
 
