@@ -11,7 +11,12 @@
     <meta name="keywords" content="life RPG, habit tracker, gamification, productivity app, questlog, RPG goals" />
     <meta name="author" content="Questlog Team" />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#1c1622" />
+    <meta name="theme-color" content="#141019" />
+
+    <!-- Anti-cache headers for index.html -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
 
     <!-- Canonical -->
     <link rel="canonical" href="https://questlog.app/" />
@@ -21,48 +26,81 @@
     <meta property="og:url" content="https://questlog.app/" />
     <meta property="og:title" content="Questlog — Turn Your Life Into an RPG" />
     <meta property="og:description" content="Gamify your real-world goals with quests, XP, gold, and character progression. Free to start — no subscriptions." />
-    <meta property="og:image" content="https://questlog.app/og-image.png" />
     <meta property="og:site_name" content="Questlog" />
     <meta property="og:locale" content="en_US" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://questlog.app/" />
-    <meta name="twitter:title" content="Questlog — Turn Your Life Into an RPG" />
-    <meta name="twitter:description" content="Gamify your daily goals — quests, XP, gold, and character levels." />
-    <meta name="twitter:image" content="https://questlog.app/og-image.png" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Questlog",
-      "url": "https://questlog.app/",
-      "description": "A life RPG that turns your real-world daily goals into quests, XP, gold, and character progression.",
-      "applicationCategory": "ProductivityApplication",
-      "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
+    <!-- Critical Dark Theme CSS to prevent white flash or unstyled render -->
+    <style>
+      html, body {
+        background-color: #141019 !important;
+        color: #f3ecd8 !important;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       }
-    }
-    </script>
+      #root {
+        min-height: 100vh;
+      }
+      .realm-preloader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-color: #141019;
+        color: #f3ecd8;
+        text-align: center;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+      .realm-spinner {
+        width: 42px;
+        height: 42px;
+        border: 3px solid rgba(240, 161, 92, 0.15);
+        border-top-color: #f0a15c;
+        border-radius: 50%;
+        animation: realm-spin 0.75s linear infinite;
+        margin-bottom: 20px;
+      }
+      @keyframes realm-spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/assets/index-BjFmlwmy.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-95S68cR_.css">
+    <script type="module" crossorigin src="/assets/index-CO2MS5Lb.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DoWUYqKE.css">
   </head>
-  <body class="bg-ink-950">
-    <div id="root"></div>
+  <body class="bg-ink-950" style="background-color: #141019;">
+    <div id="root">
+      <div id="initial-loader" class="realm-preloader">
+        <div class="realm-spinner"></div>
+        <div style="font-size: 22px; font-weight: 700; color: #f0a15c; letter-spacing: 0.05em; margin-bottom: 6px;">Questlog</div>
+        <div style="font-size: 13px; color: #a89f91;">Entering the Realm…</div>
+        <div id="loader-error-box" style="display:none; margin-top: 20px; max-width: 440px; background: rgba(220, 38, 38, 0.15); border: 1px solid rgba(220, 38, 38, 0.4); border-radius: 8px; padding: 16px; color: #fca5a5; font-size: 13px; line-height: 1.5;"></div>
+      </div>
+    </div>
+
+    <!-- Global error trap during script loading -->
+    <script>
+      window.addEventListener('error', function(e) {
+        var box = document.getElementById('loader-error-box');
+        if (box) {
+          box.style.display = 'block';
+          box.innerHTML = '<strong style="color:#ef4444; font-size:14px;">Realm Connection Issue:</strong><br>' + 
+            (e.message || 'Script or resource loading error') + 
+            '<br><br><button onclick="localStorage.clear(); sessionStorage.clear(); location.reload(true);" style="background:#e8823f; color:#141019; border:none; padding:8px 18px; border-radius:6px; font-weight:600; cursor:pointer; font-size:13px;">Clear Cache & Reload</button>';
+        }
+      });
+    </script>
+
   </body>
 </html>
-
