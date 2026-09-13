@@ -1,17 +1,17 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
 import { authApi } from '../api/client'
+import { safeStorage } from '../lib/storage'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const raw = localStorage.getItem('questlog_user')
-    return raw ? JSON.parse(raw) : null
+    return safeStorage.getParsedItem('questlog_user')
   })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem('questlog_token')
+    const token = safeStorage.getItem('questlog_token')
     if (!token) {
       setLoading(false)
       return
@@ -20,11 +20,11 @@ export function AuthProvider({ children }) {
       .me()
       .then((res) => {
         setUser(res.data)
-        localStorage.setItem('questlog_user', JSON.stringify(res.data))
+        safeStorage.setItem('questlog_user', res.data)
       })
       .catch(() => {
-        localStorage.removeItem('questlog_token')
-        localStorage.removeItem('questlog_user')
+        safeStorage.removeItem('questlog_token')
+        safeStorage.removeItem('questlog_user')
         setUser(null)
       })
       .finally(() => setLoading(false))
@@ -32,27 +32,27 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (username, password) => {
     const res = await authApi.login({ username, password })
-    localStorage.setItem('questlog_token', res.data.access_token)
-    localStorage.setItem('questlog_user', JSON.stringify(res.data.user))
+    safeStorage.setItem('questlog_token', res.data.access_token)
+    safeStorage.setItem('questlog_user', res.data.user)
     setUser(res.data.user)
   }, [])
 
   const register = useCallback(async (username, email, password) => {
     const res = await authApi.register({ username, email, password })
-    localStorage.setItem('questlog_token', res.data.access_token)
-    localStorage.setItem('questlog_user', JSON.stringify(res.data.user))
+    safeStorage.setItem('questlog_token', res.data.access_token)
+    safeStorage.setItem('questlog_user', res.data.user)
     setUser(res.data.user)
   }, [])
 
   const setSession = useCallback((token, userData) => {
-    localStorage.setItem('questlog_token', token)
-    localStorage.setItem('questlog_user', JSON.stringify(userData))
+    safeStorage.setItem('questlog_token', token)
+    safeStorage.setItem('questlog_user', userData)
     setUser(userData)
   }, [])
 
   const logout = useCallback(() => {
-    localStorage.removeItem('questlog_token')
-    localStorage.removeItem('questlog_user')
+    safeStorage.removeItem('questlog_token')
+    safeStorage.removeItem('questlog_user')
     setUser(null)
   }, [])
 

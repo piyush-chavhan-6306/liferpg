@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { safeStorage } from '../lib/storage'
 
 const API_URL = import.meta.env.VITE_API_URL !== undefined
   ? import.meta.env.VITE_API_URL
@@ -7,7 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL !== undefined
 const client = axios.create({ baseURL: API_URL })
 
 client.interceptors.request.use((config) => {
-  const token = localStorage.getItem('questlog_token')
+  const token = safeStorage.getItem('questlog_token')
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
@@ -16,9 +17,10 @@ client.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('questlog_token')
-      localStorage.removeItem('questlog_user')
-      if (!window.location.pathname.startsWith('/login') &&
+      safeStorage.removeItem('questlog_token')
+      safeStorage.removeItem('questlog_user')
+      if (typeof window !== 'undefined' &&
+          !window.location.pathname.startsWith('/login') &&
           !window.location.pathname.startsWith('/register') &&
           window.location.pathname !== '/') {
         window.location.href = '/login'
@@ -56,4 +58,3 @@ export const shopApi = {
   purchase: (id) => client.post(`/shop/${id}/purchase`),
   inventory: () => client.get('/shop/inventory/mine'),
 }
-
