@@ -16,3 +16,5 @@ frontend/.env
 *.log
 .vscode/
 .idea/
+.vercel
+node_modules/
