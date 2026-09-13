@@ -11,22 +11,30 @@ export default function OAuthButtons({ onError }) {
 
       const redirectTo = `${window.location.origin}/auth/callback`
 
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
           redirectTo,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
+          skipBrowserRedirect: true,
         },
       })
 
       if (error) throw error
+
+      if (data?.url) {
+        window.location.href = data.url
+      } else {
+        throw new Error(`Could not start ${provider} sign in. Please check provider credentials.`)
+      }
     } catch (err) {
       console.error(`${provider} OAuth error:`, err)
+      let msg = err.message || `Failed to sign in with ${provider}.`
+      if (msg.includes('Unsupported provider') || msg.includes('not enabled')) {
+        const providerName = provider.charAt(0).toUpperCase() + provider.slice(1)
+        msg = `${providerName} login is not enabled yet in Supabase. Please add your ${providerName} Client ID & Secret in Supabase Dashboard -> Authentication -> Providers.`
+      }
       if (onError) {
-        onError(err.message || `Failed to sign in with ${provider}.`)
+        onError(msg)
       }
       setLoadingProvider(null)
     }
