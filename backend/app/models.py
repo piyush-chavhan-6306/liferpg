@@ -84,7 +84,7 @@ class Character(Base):
     longest_streak = Column(Integer, default=0, nullable=False)
     last_activity_date = Column(DateTime, nullable=True)  # date-only precision used
 
-    equipped_theme = Column(String, default="ember", nullable=False)
+    equipped_theme = Column(String, default="theme-ember", nullable=False)
 
     user = relationship("User", back_populates="character")
 

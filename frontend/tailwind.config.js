@@ -29,9 +29,27 @@ export default {
           400: '#8fae6b',
           500: '#6f9450',
         },
+        frost: {
+          400: '#7ec8e3',
+          500: '#4baac8',
+          600: '#2d8aac',
+        },
+        verdant: {
+          400: '#6dbf67',
+          500: '#4a9e44',
+          600: '#327832',
+        },
+        void: {
+          400: '#b57aff',
+          500: '#9350e8',
+          600: '#6e2ec9',
+        },
       },
       boxShadow: {
         glow: '0 0 24px -4px rgba(232, 130, 63, 0.55)',
+        'glow-frost': '0 0 24px -4px rgba(75, 170, 200, 0.55)',
+        'glow-verdant': '0 0 24px -4px rgba(74, 158, 68, 0.55)',
+        'glow-void': '0 0 24px -4px rgba(147, 80, 232, 0.55)',
       },
       keyframes: {
         'pop-in': {
@@ -52,3 +70,4 @@ export default {
   },
   plugins: [],
 }
+

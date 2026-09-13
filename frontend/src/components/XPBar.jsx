@@ -20,7 +20,7 @@ export default function XPBar({ xp, xpToNext, level }) {
         aria-label={`Experience progress: ${xp} of ${xpToNext} toward level ${level + 1}`}
       >
         <motion.div
-          className="h-full bg-gradient-to-r from-ember-600 via-ember-500 to-ember-400"
+          className="h-full xp-bar-fill"
           initial={false}
           animate={{ width: `${pct}%` }}
           transition={{ type: 'spring', stiffness: 120, damping: 20 }}
@@ -29,3 +29,4 @@ export default function XPBar({ xp, xpToNext, level }) {
     </div>
   )
 }
+

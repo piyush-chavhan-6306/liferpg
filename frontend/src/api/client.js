@@ -16,7 +16,9 @@ client.interceptors.response.use(
     if (err.response?.status === 401) {
       localStorage.removeItem('questlog_token')
       localStorage.removeItem('questlog_user')
-      if (!window.location.pathname.startsWith('/login')) {
+      if (!window.location.pathname.startsWith('/login') &&
+          !window.location.pathname.startsWith('/register') &&
+          window.location.pathname !== '/') {
         window.location.href = '/login'
       }
     }
@@ -34,10 +36,12 @@ export const authApi = {
 
 export const characterApi = {
   get: () => client.get('/character'),
+  equip: (themeId) => client.patch('/character/equip', { theme_id: themeId }),
 }
 
 export const tasksApi = {
-  list: () => client.get('/tasks'),
+  list: (statusFilter) =>
+    client.get('/tasks', statusFilter ? { params: { status_filter: statusFilter } } : undefined),
   create: (data) => client.post('/tasks', data),
   update: (id, data) => client.patch(`/tasks/${id}`, data),
   remove: (id) => client.delete(`/tasks/${id}`),
@@ -49,3 +53,4 @@ export const shopApi = {
   purchase: (id) => client.post(`/shop/${id}/purchase`),
   inventory: () => client.get('/shop/inventory/mine'),
 }
+

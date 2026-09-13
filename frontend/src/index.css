@@ -2,6 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =====================================================
+   THEME SYSTEM — CSS Custom Properties
+   Applied via .theme-ember/.theme-frost etc on #root
+   ===================================================== */
+:root,
+.theme-ember {
+  --accent:       #f0a15c;
+  --accent-deep:  #e8823f;
+  --glow-color:   rgba(232, 130, 63, 0.55);
+  --bg-radial-1:  rgba(232, 130, 63, 0.08);
+  --bg-radial-2:  rgba(143, 174, 107, 0.06);
+}
+
+.theme-frost {
+  --accent:       #7ec8e3;
+  --accent-deep:  #4baac8;
+  --glow-color:   rgba(75, 170, 200, 0.55);
+  --bg-radial-1:  rgba(75, 170, 200, 0.1);
+  --bg-radial-2:  rgba(126, 200, 227, 0.06);
+}
+
+.theme-verdant {
+  --accent:       #6dbf67;
+  --accent-deep:  #4a9e44;
+  --glow-color:   rgba(74, 158, 68, 0.55);
+  --bg-radial-1:  rgba(74, 158, 68, 0.09);
+  --bg-radial-2:  rgba(109, 191, 103, 0.06);
+}
+
+.theme-void {
+  --accent:       #b57aff;
+  --accent-deep:  #9350e8;
+  --glow-color:   rgba(147, 80, 232, 0.55);
+  --bg-radial-1:  rgba(147, 80, 232, 0.1);
+  --bg-radial-2:  rgba(181, 122, 255, 0.06);
+}
+
 @layer base {
   html {
     @apply font-body;
@@ -9,8 +46,8 @@
   body {
     @apply bg-ink-950 text-parchment-100;
     background-image:
-      radial-gradient(circle at 15% 10%, rgba(232, 130, 63, 0.08), transparent 40%),
-      radial-gradient(circle at 85% 90%, rgba(143, 174, 107, 0.06), transparent 45%);
+      radial-gradient(circle at 15% 10%, var(--bg-radial-1, rgba(232, 130, 63, 0.08)), transparent 40%),
+      radial-gradient(circle at 85% 90%, var(--bg-radial-2, rgba(143, 174, 107, 0.06)), transparent 45%);
     background-attachment: fixed;
   }
   h1, h2, h3, h4 {
@@ -18,7 +55,7 @@
   }
   /* Visible, deliberate focus ring for keyboard navigation everywhere */
   :focus-visible {
-    outline: 2px solid #f0a15c;
+    outline: 2px solid var(--accent, #f0a15c);
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -33,12 +70,22 @@
 }
 
 @layer components {
+  /* Theme-aware accent colour used on buttons, bars, text highlights */
+  .accent-text    { color: var(--accent); }
+  .accent-border  { border-color: var(--accent); }
+  .accent-bg      { background-color: var(--accent); }
+
   .panel {
     @apply bg-ink-900/80 border border-ink-700 rounded-lg backdrop-blur-sm;
   }
   .btn-primary {
-    @apply bg-ember-500 hover:bg-ember-400 text-ink-950 font-semibold px-4 py-2 rounded-md
+    background-color: var(--accent-deep, #e8823f);
+    color: #141019;
+    @apply font-semibold px-4 py-2 rounded-md
            transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .btn-primary:hover {
+    background-color: var(--accent, #f0a15c);
   }
   .btn-secondary {
     @apply bg-ink-800 hover:bg-ink-700 text-parchment-100 border border-ink-700 font-medium px-4 py-2 rounded-md
@@ -46,6 +93,21 @@
   }
   .input-field {
     @apply bg-ink-950 border border-ink-700 rounded-md px-3 py-2 text-parchment-100
-           placeholder:text-parchment-300/40 focus:border-ember-500 transition-colors;
+           placeholder:text-parchment-300/40 transition-colors;
+  }
+  .input-field:focus {
+    border-color: var(--accent, #e8823f);
+    outline: none;
+  }
+
+  /* Themed glow shadow */
+  .shadow-theme-glow {
+    box-shadow: 0 0 24px -4px var(--glow-color, rgba(232, 130, 63, 0.55));
+  }
+
+  /* Themed XP bar fill — used by XPBar component via inline style override */
+  .xp-bar-fill {
+    background: linear-gradient(to right, var(--accent-deep, #c9642a), var(--accent, #f0a15c));
   }
 }
+

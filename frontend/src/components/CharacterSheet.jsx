@@ -4,20 +4,49 @@ import XPBar from './XPBar.jsx'
 import StreakFlame from './StreakFlame.jsx'
 import { ATTRIBUTES } from '../utils/leveling.js'
 
-export default function CharacterSheet({ character, username }) {
+// Map shop item ID → display label for titles
+const TITLE_LABELS = {
+  'title-adept': 'Adept',
+  'title-archon': 'Archon',
+}
+
+export default function CharacterSheet({ character, username, inventory = [] }) {
   if (!character) return null
   const maxAttr = Math.max(1, ...ATTRIBUTES.map((a) => character[a.key] || 0))
+
+  const badges = inventory.filter((i) => i.category === 'badge')
+  const equippedTitle =
+    inventory.find((i) => i.category === 'title' && TITLE_LABELS[i.id])
 
   return (
     <section className="panel p-5" aria-labelledby="character-heading">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h2 id="character-heading" className="text-xl text-parchment-100">
+          <h2 id="character-heading" className="text-xl text-parchment-100 flex items-center gap-2 flex-wrap">
             {username}
+            {equippedTitle && (
+              <span className="text-xs px-2 py-0.5 rounded-full border accent-border accent-text font-normal">
+                {equippedTitle.icon} {TITLE_LABELS[equippedTitle.id]}
+              </span>
+            )}
           </h2>
           <p className="text-sm text-parchment-300/60">Level {character.level} Adventurer</p>
+          {badges.length > 0 && (
+            <div className="flex gap-1.5 mt-1.5 flex-wrap" aria-label="Earned badges">
+              {badges.map((b) => (
+                <span
+                  key={b.id}
+                  title={b.name + ' — ' + b.description}
+                  aria-label={b.name}
+                  className="text-base cursor-default"
+                >
+                  {b.icon}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-1.5 text-ember-400 font-semibold" aria-label={`${character.gold} gold`}>
+        <div className="flex items-center gap-1.5 accent-text font-semibold" aria-label={`${character.gold} gold`}>
           <span aria-hidden="true">🪙</span>
           <motion.span key={character.gold} initial={{ scale: 1.3 }} animate={{ scale: 1 }}>
             {character.gold}
@@ -61,3 +90,4 @@ export default function CharacterSheet({ character, username }) {
     </section>
   )
 }
+

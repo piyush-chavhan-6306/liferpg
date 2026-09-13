@@ -18,7 +18,7 @@ export default function Register() {
     setBusy(true)
     try {
       await register(username, email, password)
-      navigate('/')
+      navigate('/app')
     } catch (err) {
       const detail = err.response?.data?.detail
       setError(typeof detail === 'string' ? detail : 'Could not create your character. Check your details.')
@@ -102,6 +102,9 @@ export default function Register() {
           <Link to="/login" className="text-ember-400 hover:underline">
             Sign in
           </Link>
+        </p>
+        <p className="text-sm text-parchment-300/40 mt-3 text-center">
+          <Link to="/" className="hover:text-parchment-300 transition-colors">← Back to home</Link>
         </p>
       </motion.div>
     </main>

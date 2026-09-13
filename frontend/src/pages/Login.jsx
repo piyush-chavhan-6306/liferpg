@@ -17,7 +17,7 @@ export default function Login() {
     setBusy(true)
     try {
       await login(username, password)
-      navigate('/')
+      navigate('/app')
     } catch (err) {
       setError(err.response?.data?.detail || 'Something went wrong. Try again.')
     } finally {
@@ -82,6 +82,9 @@ export default function Login() {
           <Link to="/register" className="text-ember-400 hover:underline">
             Begin your quest
           </Link>
+        </p>
+        <p className="text-sm text-parchment-300/40 mt-3 text-center">
+          <Link to="/" className="hover:text-parchment-300 transition-colors">← Back to home</Link>
         </p>
       </motion.div>
     </main>

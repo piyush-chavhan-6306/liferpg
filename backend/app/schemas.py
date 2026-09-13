@@ -129,3 +129,7 @@ class ShopItemOut(BaseModel):
 class PurchaseResult(BaseModel):
     item: ShopItemOut
     character: CharacterOut
+
+
+class EquipThemeRequest(BaseModel):
+    theme_id: str
